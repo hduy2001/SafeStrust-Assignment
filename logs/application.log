@@ -12986,3 +12986,8 @@ org.springframework.web.servlet.resource.NoResourceFoundException: No static res
 2025-03-08T15:26:20.840+07:00  INFO 78005 --- [assignment] [http-nio-8080-exec-8] c.s.a.config.LoggingInterceptor          : [RESPONSE] GET /api/v1/contact - Status: 200
 2025-03-08T15:26:24.603+07:00  INFO 78005 --- [assignment] [http-nio-8080-exec-9] c.s.a.config.LoggingInterceptor          : [REQUEST] GET /api/v1/contact/1
 2025-03-08T15:26:24.609+07:00  INFO 78005 --- [assignment] [http-nio-8080-exec-9] c.s.a.config.LoggingInterceptor          : [RESPONSE] GET /api/v1/contact/1 - Status: 200
+2025-03-08T15:26:49.928+07:00  INFO 78005 --- [assignment] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-08T15:26:49.937+07:00  INFO 78005 --- [assignment] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-08T15:26:49.940+07:00  INFO 78005 --- [assignment] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-08T15:26:49.941+07:00  INFO 78005 --- [assignment] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-08T15:26:49.943+07:00  INFO 78005 --- [assignment] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
