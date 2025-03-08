@@ -12,4 +12,5 @@ public interface ContactService {
     ContactDto createContact(ContactDto contactDto);
     ContactDto updateContact(Long id, ContactDto contactDto);
     Map<String, String> deleteContact(Long id);
+    Page<ContactDto> searchContacts(String keyword, Pageable pageable);
 }

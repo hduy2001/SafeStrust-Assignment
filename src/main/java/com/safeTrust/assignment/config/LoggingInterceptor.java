@@ -1,5 +1,6 @@
 package com.safeTrust.assignment.config;
 
+import com.safeTrust.assignment.constant.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -14,16 +15,16 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        logger.info("[REQUEST] {} {}", request.getMethod(), request.getRequestURI());
+        logger.info(Message.REQUEST_LOG, request.getMethod(), request.getRequestURI());
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, @NonNull Object handler, Exception ex) {
-        logger.info("[RESPONSE] {} {} - Status: {}", request.getMethod(), request.getRequestURI(), response.getStatus());
+        logger.info(Message.RESPONSE_LOG, request.getMethod(), request.getRequestURI(), response.getStatus());
 
         if (ex != null) {
-            logger.error("Exception occurred: {}", ex.getMessage(), ex);
+            logger.error(Message.EXCEPTION_OCCURRED, ex.getMessage(), ex);
         }
     }
 }

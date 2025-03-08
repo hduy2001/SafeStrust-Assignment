@@ -1,5 +1,8 @@
 package com.safeTrust.assignment.exception;
 
+import com.safeTrust.assignment.constant.Constant;
+import com.safeTrust.assignment.constant.Message;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Hidden
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
@@ -23,7 +27,7 @@ public class GlobalExceptionHandler {
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
-        logger.error("Validation failed: {}", errors);
+        logger.error(Message.VALIDATION_FAILED, errors);
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 errors.toString(),
@@ -45,7 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
-        logger.error("Unexpected error: {}", ex.getMessage(), ex);
-        return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+        logger.error(Message.UNEXPECTED_ERROR, ex.getMessage(), ex);
+        return new ResponseEntity<>(Constant.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
