@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("${base-path}/contact")
 @RequiredArgsConstructor
+@Slf4j
 public class ContactController {
     private final ContactService contactService;
 
@@ -29,7 +31,14 @@ public class ContactController {
     @Operation(summary = Constant.GET_A_CONTACT, description = Message.GET_A_CONTACT)
     @GetMapping("/{id}")
     public ResponseEntity<?> find(@PathVariable Long id) {
-        return ResponseEntity.ok(contactService.getOneContact(id));
+        long startTime = System.currentTimeMillis();
+
+        ContactDto contact = contactService.getOneContact(id);
+
+        long endTime = System.currentTimeMillis();
+        log.info("⏳ Database Query Time: {} ms", (endTime - startTime));
+
+        return ResponseEntity.ok(contact);
     }
 
     @Operation(summary = Constant.CREATE_A_NEW_CONTACT, description = Message.CREATE_A_NEW_CONTACT)

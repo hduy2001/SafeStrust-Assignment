@@ -20,4 +20,5 @@ public class Message {
     public static final String UPDATE_A_CONTACT = "Updates contact information based on ID";
     public static final String DELETE_A_CONTACT = "Deletes a contact based on ID";
     public static final String SEARCH_CONTACTS = "Search for contacts by keyword";
+    public static final String RECORD_LOCKED = "Record was LOCKED by another request!";
 }

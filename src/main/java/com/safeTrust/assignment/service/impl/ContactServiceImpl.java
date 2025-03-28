@@ -10,20 +10,32 @@ import com.safeTrust.assignment.repository.ContactRepository;
 import com.safeTrust.assignment.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@EnableCaching
 public class ContactServiceImpl implements ContactService {
+    private final StringRedisTemplate redisTemplate;
     private final ContactRepository contactRepository;
     private final ContactMapper mapper;
+    private final CacheManager cacheManager;
+    private static final String LOCK_RECORD = "contact_lock:";
 
     @Override
     public Page<ContactDto> getContacts(Pageable pageable) {
@@ -32,6 +44,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
+    @Cacheable(value = "contacts", key = "#id")
     public ContactDto getOneContact(Long id) {
         return contactRepository.findById(id)
                 .map(mapper::toDto)
@@ -40,6 +53,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     @Transactional
+    @CachePut(value = "contacts", key = "#result.id")
     public ContactDto createContact(ContactDto contactDto) {
         return mapper.toDto(contactRepository.save(mapper.toEntity(contactDto)));
     }
@@ -49,12 +63,28 @@ public class ContactServiceImpl implements ContactService {
     public ContactDto updateContact(Long id, ContactDto contactDto) {
         ContactEntity existContact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Message.CONTACT_NOT_FOUND_WITH_ID + id));
-        mapper.updateEntity(existContact, contactDto);
-        return mapper.toDto(contactRepository.save(existContact));
+
+        String lockKey = LOCK_RECORD + id;
+        Boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", 10, TimeUnit.SECONDS);
+
+        if (Boolean.FALSE.equals(locked)) {
+            throw new RuntimeException(Message.RECORD_LOCKED);
+        }
+
+        try {
+            mapper.updateEntity(existContact, contactDto);
+            ContactDto response = mapper.toDto(contactRepository.save(existContact));
+            Objects.requireNonNull(cacheManager.getCache("contacts")).put(response.getId(), response);
+            return response;
+        }
+        finally {
+            redisTemplate.delete(lockKey);
+        }
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = "contacts", key = "#id")
     public Map<String, String> deleteContact(Long id) {
         contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Message.CONTACT_NOT_FOUND_WITH_ID + id));

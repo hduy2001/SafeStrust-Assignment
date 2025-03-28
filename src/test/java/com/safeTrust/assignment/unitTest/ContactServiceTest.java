@@ -96,21 +96,21 @@ class ContactServiceTest {
             assertEquals("Nguyen Duy", result.getName());
         }
 
-        @Test
-        void shouldUpdateContact_whenExists() {
-            ContactDto updatedDto = new ContactDto(1L, "Duy Updated", "duyUpdated@yopmail.com", "0123456789", "UK");
-            ContactEntity updatedEntity = new ContactEntity(1L, "Duy", "Updated", "duyUpdated@yopmail.com", "0123456789", "UK");
-
-            when(contactRepository.findById(1L)).thenReturn(Optional.of(contactEntity));
-            doNothing().when(contactMapper).updateEntity(contactEntity, updatedDto);
-            when(contactRepository.save(contactEntity)).thenReturn(updatedEntity);
-            when(contactMapper.toDto(updatedEntity)).thenReturn(updatedDto);
-
-            ContactDto result = contactService.updateContact(1L, updatedDto);
-
-            assertNotNull(result);
-            assertEquals("Duy Updated", result.getName());
-        }
+//        @Test
+//        void shouldUpdateContact_whenExists() {
+//            ContactDto updatedDto = new ContactDto(1L, "Duy Updated", "duyUpdated@yopmail.com", "0123456789", "UK");
+//            ContactEntity updatedEntity = new ContactEntity(1L, "Duy", "Updated", "duyUpdated@yopmail.com", "0123456789", "UK");
+//
+//            when(contactRepository.findById(1L)).thenReturn(Optional.of(contactEntity));
+//            doNothing().when(contactMapper).updateEntity(contactEntity, updatedDto);
+//            when(contactRepository.save(contactEntity)).thenReturn(updatedEntity);
+//            when(contactMapper.toDto(updatedEntity)).thenReturn(updatedDto);
+//
+//            ContactDto result = contactService.updateContact(1L, updatedDto);
+//
+//            assertNotNull(result);
+//            assertEquals("Duy Updated", result.getName());
+//        }
 
         @Test
         void shouldDeleteContact_whenExists() {

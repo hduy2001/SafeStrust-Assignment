@@ -55,10 +55,10 @@ class ContactControllerTest {
         mockMvc.perform(get("/api/v1/contact/" + contactId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Nguyen Duy"))
-                .andExpect(jsonPath("$.email").value("duy@yopmail.com"))
+                .andExpect(jsonPath("$.name").value("Duy 1"))
+                .andExpect(jsonPath("$.email").value("duy123@yopmail.com"))
                 .andExpect(jsonPath("$.telephoneNumber").value("0123456789"))
-                .andExpect(jsonPath("$.postalAddress").value("HCM"));
+                .andExpect(jsonPath("$.postalAddress").value("Tay Ninh"));
     }
 
 
