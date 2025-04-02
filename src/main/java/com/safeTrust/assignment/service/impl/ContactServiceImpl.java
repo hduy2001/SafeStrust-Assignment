@@ -8,6 +8,7 @@ import com.safeTrust.assignment.exception.ResourceNotFoundException;
 import com.safeTrust.assignment.mapper.ContactMapper;
 import com.safeTrust.assignment.repository.ContactRepository;
 import com.safeTrust.assignment.service.ContactService;
+import com.safeTrust.assignment.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class ContactServiceImpl implements ContactService {
     private final ContactRepository contactRepository;
     private final ContactMapper mapper;
+    private final KafkaProducerService kafkaProducerService;
 
     @Override
     public Page<ContactDto> getContacts(Pageable pageable) {
@@ -41,7 +43,9 @@ public class ContactServiceImpl implements ContactService {
     @Override
     @Transactional
     public ContactDto createContact(ContactDto contactDto) {
-        return mapper.toDto(contactRepository.save(mapper.toEntity(contactDto)));
+        ContactDto savedContact = mapper.toDto(contactRepository.save(mapper.toEntity(contactDto)));
+        kafkaProducerService.sendMessage("Create contact: " + savedContact);
+        return savedContact;
     }
 
     @Override
